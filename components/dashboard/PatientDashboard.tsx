@@ -19,6 +19,8 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+import Link from "next/link"; 
+
 interface Doctor {
   _id: string;
   firstName: string;
@@ -265,7 +267,7 @@ export default function PatientDashboard() {
             </Card>
 
             {/* Quick Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setActiveTab('doctors')}>
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
@@ -289,6 +291,20 @@ export default function PatientDashboard() {
                   </CardDescription>
                 </CardHeader>
               </Card>
+
+              <Link href="/report-analysis" passHref>
+                <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <CardTitle className="flex items-center space-x-2">
+                      <Stethoscope className="h-5 w-5 text-orange-600" />
+                      <span>Analyse Your Report</span>
+                    </CardTitle>
+                    <CardDescription>
+                      Get AI-powered insights on your medical reports (coming soon)
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              </Link>
             </div>
           </motion.div>
         )}
