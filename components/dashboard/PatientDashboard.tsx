@@ -111,10 +111,10 @@ export default function PatientDashboard() {
       <header className="bg-white shadow-sm border-b border-blue-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
+            {/* <div className="flex items-center space-x-4">
               <Heart className="h-8 w-8 text-blue-600" />
               <span className="text-xl font-bold text-gray-900">HealthCare Plus</span>
-            </div>
+            </div> */}
             
             <nav className="hidden md:flex space-x-8">
               {['overview', 'appointments', 'doctors', 'profile'].map((tab) => (
@@ -134,7 +134,7 @@ export default function PatientDashboard() {
 
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-600">Welcome, {user?.firstName}</span>
-              <UserButton afterSignOutUrl="/" />
+              {/* <UserButton afterSignOutUrl="/" /> */}
             </div>
           </div>
         </div>

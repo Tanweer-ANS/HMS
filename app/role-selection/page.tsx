@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -15,22 +14,34 @@ export default function RoleSelectionPage() {
         // publicMetadata: { role },
         unsafeMetadata: { role },
       });
+      // Save to the database
+      await fetch("/api/save-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          clerkUserId: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role,
+        }),
+      });
       router.push("/dashboard");
     }
   }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-      <h1 className="text-3xl font-bold mb-8 text-blue-700">Select Your Role</h1>
+      <h1 className="text-3xl font-bold mb-8 text-blue-700">
+        Select Your Role
+      </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        
         <button
           className="px-8 py-3 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 focus:outline-none transition"
           onClick={() => handleRoleSelect("doctor")}
         >
           Doctor
         </button>
-        
+
         <button
           className="px-8 py-3 bg-teal-600 text-white rounded-lg shadow hover:bg-teal-700 focus:outline-none transition"
           onClick={() => handleRoleSelect("patient")}

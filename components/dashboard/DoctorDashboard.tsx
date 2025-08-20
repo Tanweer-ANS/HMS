@@ -112,8 +112,8 @@ export default function DoctorDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
-              <Heart className="h-8 w-8 text-green-600" />
-              <span className="text-xl font-bold text-gray-900">HealthCare Plus</span>
+              {/* <Heart className="h-8 w-8 text-green-600" />
+              <span className="text-xl font-bold text-gray-900">HealthCare Plus</span> */}
               <span className="text-sm text-gray-500">Doctor Portal</span>
             </div>
             
@@ -135,7 +135,7 @@ export default function DoctorDashboard() {
 
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-600">Dr. {user?.firstName}</span>
-              <UserButton afterSignOutUrl="/" />
+              {/* <UserButton afterSignOutUrl="/" /> */}
             </div>
           </div>
         </div>
