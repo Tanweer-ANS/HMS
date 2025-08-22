@@ -1,20 +1,23 @@
+// app/api/appointments/doctor/route.ts
+
 import { NextResponse } from 'next/server';
-import { useAuth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import connectDB from '@/lib/mongodb';
 import Appointment from '@/models/Appointment';
-import Patient from '@/models/Patient';
 import Doctor from '@/models/Doctor';
 
 export async function GET() {
   try {
-    const { userId } = useAuth();
+    const { userId } = await auth();
+
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     await connectDB();
-    
+
     const doctor = await Doctor.findOne({ clerkId: userId });
+
     if (!doctor) {
       return NextResponse.json({ appointments: [] });
     }
@@ -24,13 +27,17 @@ export async function GET() {
       .sort({ appointmentDate: -1 });
 
     const formattedAppointments = appointments.map(appointment => ({
-      ...appointment.toObject(),
-      patient: appointment.patientId
+      ...appointment.toObject({ getters: true, virtuals: true }),
+      patient: appointment.patientId,
     }));
 
     return NextResponse.json({ appointments: formattedAppointments });
   } catch (error) {
-    console.error('Error fetching doctor appointments:', error);
-    return NextResponse.json({ error: 'Failed to fetch appointments' }, { status: 500 });
+    // This is the critical part.
+    // Log the full error to your server's console for debugging.
+    console.error('Error in API route:', error);
+
+    // Always return a JSON response, even if something goes wrong.
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

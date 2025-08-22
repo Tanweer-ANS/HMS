@@ -1,9 +1,13 @@
-import { clerkMiddleware } from '@clerk/nextjs/server';
+// middleware.ts
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
- 
-export default clerkMiddleware({
+const isProtectedRoute = createRouteMatcher(['/api/appointments(.*)'])
+
+export default clerkMiddleware(async(auth , req)=>{
+    if (isProtectedRoute(req)) await auth.protect()
 });
- 
+
 export const config = {
-  matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
+  // Use a regex to match all routes except static files and _next
+  matcher: ['/((?!.*\\..*|_next).*)', '/'],
 };

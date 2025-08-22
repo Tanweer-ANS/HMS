@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { useAuth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import connectDB from '@/lib/mongodb';
 import Appointment from '@/models/Appointment';
 import Patient from '@/models/Patient';
@@ -7,7 +7,7 @@ import Doctor from '@/models/Doctor';
 
 export async function GET() {
   try {
-    const { userId } = useAuth();
+    const { userId } =  await auth();
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
