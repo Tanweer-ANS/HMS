@@ -5,11 +5,11 @@ import { useUser, UserButton } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Calendar, 
-  Clock, 
-  Heart, 
-  User, 
+import {
+  Calendar,
+  Clock,
+  Heart,
+  User,
   TrendingUp,
   Users,
   DollarSign,
@@ -18,6 +18,8 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+
+import DoctorOnboarding from "@/app/doctor/onboarding/page";
 
 interface Patient {
   _id: string;
@@ -59,10 +61,10 @@ export default function DoctorDashboard() {
         fetch('/api/appointments/doctor'),
         fetch('/api/doctor/profile')
       ]);
-      
+
       const appointmentsData = await appointmentsRes.json();
       const doctorData = await doctorRes.json();
-      
+
       setAppointments(appointmentsData.appointments || []);
       setDoctorInfo(doctorData.doctor || null);
     } catch (error) {
@@ -87,11 +89,11 @@ export default function DoctorDashboard() {
     return new Date(apt.appointmentDate).toDateString() === today;
   });
 
-  const upcomingAppointments = appointments.filter(apt => 
+  const upcomingAppointments = appointments.filter(apt =>
     new Date(apt.appointmentDate) >= new Date() && apt.status !== 'Cancelled'
   ).slice(0, 5);
 
-  const completedAppointments = appointments.filter(apt => 
+  const completedAppointments = appointments.filter(apt =>
     apt.status === 'Completed'
   );
 
@@ -116,17 +118,16 @@ export default function DoctorDashboard() {
               <span className="text-xl font-bold text-gray-900">HealthCare Plus</span> */}
               <span className="text-sm text-gray-500">Doctor Portal</span>
             </div>
-            
+
             <nav className="hidden md:flex space-x-8">
               {['overview', 'appointments', 'patients', 'analytics', 'profile'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-3 py-2 rounded-md text-sm font-medium capitalize transition-colors ${
-                    activeTab === tab
+                  className={`px-3 py-2 rounded-md text-sm font-medium capitalize transition-colors ${activeTab === tab
                       ? 'bg-green-100 text-green-700'
                       : 'text-gray-500 hover:text-gray-700'
-                  }`}
+                    }`}
                 >
                   {tab}
                 </button>
@@ -271,8 +272,8 @@ export default function DoctorDashboard() {
                         </div>
                       ))}
                       {todayAppointments.length > 4 && (
-                        <Button 
-                          variant="outline" 
+                        <Button
+                          variant="outline"
                           className="w-full"
                           onClick={() => setActiveTab('appointments')}
                         >
@@ -294,8 +295,8 @@ export default function DoctorDashboard() {
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
                     <span>Upcoming Appointments</span>
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       onClick={() => setActiveTab('appointments')}
                       className="bg-green-600 hover:bg-green-700"
                     >
@@ -390,7 +391,7 @@ export default function DoctorDashboard() {
             className="space-y-6"
           >
             <h2 className="text-2xl font-bold text-gray-900">Manage Appointments</h2>
-            
+
             <div className="space-y-4">
               {appointments.length > 0 ? (
                 appointments.map((appointment) => (
@@ -447,6 +448,9 @@ export default function DoctorDashboard() {
               )}
             </div>
           </motion.div>
+        )}
+        {activeTab === "profile" && (
+          <DoctorOnboarding />
         )}
       </div>
     </div>

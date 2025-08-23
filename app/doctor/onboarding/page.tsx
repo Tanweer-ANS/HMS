@@ -51,7 +51,7 @@ export default function DoctorOnboarding() {
 
   const handleSlotChange = (day: string, field: 'startTime' | 'endTime', value: string) => {
     const existingSlotIndex = formData.availableSlots.findIndex(slot => slot.day === day);
-    
+
     if (existingSlotIndex >= 0) {
       const updatedSlots = [...formData.availableSlots];
       updatedSlots[existingSlotIndex] = {
@@ -61,9 +61,9 @@ export default function DoctorOnboarding() {
       setFormData(prev => ({ ...prev, availableSlots: updatedSlots }));
     } else {
       const newSlot = { day, startTime: '', endTime: '', [field]: value };
-      setFormData(prev => ({ 
-        ...prev, 
-        availableSlots: [...prev.availableSlots, newSlot] 
+      setFormData(prev => ({
+        ...prev,
+        availableSlots: [...prev.availableSlots, newSlot]
       }));
     }
   };
@@ -130,9 +130,9 @@ export default function DoctorOnboarding() {
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <Label htmlFor="specialization">Specialization *</Label>
-                    <Select
+                    {/* <Select
                       value={formData.specialization}
-                      onValueChange={(value) => setFormData(prev => ({ ...prev, specialization: value }))}
+                      onValueChange={(value:any) => setFormData(prev => ({ ...prev, specialization: value }))}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select your specialization" />
@@ -142,6 +142,11 @@ export default function DoctorOnboarding() {
                           <SelectItem key={spec} value={spec}>{spec}</SelectItem>
                         ))}
                       </SelectContent>
+                    </Select> */}
+                    <Select value={formData.specialization} onValueChange={value => setFormData({ ...formData, specialization: value })}>
+                      {specializations.map(spec => (
+                        <SelectItem key={spec} value={spec}>{spec}</SelectItem>
+                      ))}
                     </Select>
                   </div>
 
@@ -151,7 +156,7 @@ export default function DoctorOnboarding() {
                       id="experience"
                       type="number"
                       value={formData.experience}
-                      onChange={(e) => setFormData(prev => ({ ...prev, experience: e.target.value }))}
+                      onChange={(e: any) => setFormData(prev => ({ ...prev, experience: e.target.value }))}
                       placeholder="e.g., 5"
                       required
                     />
@@ -162,7 +167,7 @@ export default function DoctorOnboarding() {
                     <Input
                       id="qualification"
                       value={formData.qualification}
-                      onChange={(e) => setFormData(prev => ({ ...prev, qualification: e.target.value }))}
+                      onChange={(e: any) => setFormData(prev => ({ ...prev, qualification: e.target.value }))}
                       placeholder="e.g., MBBS, MD"
                       required
                     />
@@ -173,7 +178,7 @@ export default function DoctorOnboarding() {
                     <Input
                       id="contactNumber"
                       value={formData.contactNumber}
-                      onChange={(e) => setFormData(prev => ({ ...prev, contactNumber: e.target.value }))}
+                      onChange={(e: any) => setFormData(prev => ({ ...prev, contactNumber: e.target.value }))}
                       placeholder="+1 (555) 123-4567"
                       required
                     />
@@ -185,7 +190,7 @@ export default function DoctorOnboarding() {
                       id="consultationFee"
                       type="number"
                       value={formData.consultationFee}
-                      onChange={(e) => setFormData(prev => ({ ...prev, consultationFee: e.target.value }))}
+                      onChange={(e: any) => setFormData(prev => ({ ...prev, consultationFee: e.target.value }))}
                       placeholder="100"
                       required
                     />
@@ -197,7 +202,7 @@ export default function DoctorOnboarding() {
                   <Textarea
                     id="biography"
                     value={formData.biography}
-                    onChange={(e) => setFormData(prev => ({ ...prev, biography: e.target.value }))}
+                    onChange={(e: any) => setFormData(prev => ({ ...prev, biography: e.target.value }))}
                     placeholder="Tell patients about yourself, your approach to healthcare, and your experience..."
                     rows={4}
                   />
@@ -214,7 +219,7 @@ export default function DoctorOnboarding() {
                           <div>
                             <Select
                               value={slot?.startTime || ''}
-                              onValueChange={(value) => handleSlotChange(day, 'startTime', value)}
+                              onValueChange={(value: any) => handleSlotChange(day, 'startTime', value)}
                             >
                               <SelectTrigger>
                                 <SelectValue placeholder="Start time" />
@@ -229,7 +234,7 @@ export default function DoctorOnboarding() {
                           <div>
                             <Select
                               value={slot?.endTime || ''}
-                              onValueChange={(value) => handleSlotChange(day, 'endTime', value)}
+                              onValueChange={(value: any) => handleSlotChange(day, 'endTime', value)}
                             >
                               <SelectTrigger>
                                 <SelectValue placeholder="End time" />
