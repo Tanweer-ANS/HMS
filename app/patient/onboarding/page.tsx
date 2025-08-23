@@ -80,9 +80,6 @@ export default function PatientOnboarding() {
     try {
       const response = await fetch('/api/patients/profile', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({
           clerkId: user.id,
           ...formData,

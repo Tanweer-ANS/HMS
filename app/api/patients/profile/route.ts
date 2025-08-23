@@ -7,6 +7,7 @@ export async function PUT(request: Request) {
     await connectDB();
     const data = await request.json();
     const { clerkId, ...updateData } = data;
+    console.log(clerkId)
 
     const patient = await Patient.findOneAndUpdate(
       { clerkId },

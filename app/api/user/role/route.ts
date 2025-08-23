@@ -32,11 +32,6 @@ export async function POST(request: Request) {
           lastName,
           email,
           name: `${firstName} ${lastName}`, // Required field
-          dateOfBirth: new Date(),
-          age: 0, // Required field - default to 0
-          gender: 'Other', // Required field - using valid enum value
-          phone: 'Not provided', // Required field - placeholder value
-          address: 'Not provided', // Required field - placeholder value
         });
       }
     }
