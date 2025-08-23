@@ -15,7 +15,8 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (isLoaded && user) {
-      const role = user.publicMetadata?.role as string;
+      // const role = user.publicMetadata?.role as string;
+      const role = user.unsafeMetadata?.role as string; // Use unsafeMetadata for roles
       if (!role) {
         router.push('/role-selection');
       } else {

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
@@ -19,3 +20,20 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
 }
 
 export { Input }
+=======
+import React from "react";
+
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className = "", ...props }, ref) => (
+    <input
+      ref={ref}
+      className={`border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-500 ${className}`}
+      {...props}
+    />
+  )
+);
+
+Input.displayName = "Input";
+>>>>>>> main
