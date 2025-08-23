@@ -16,10 +16,10 @@ export async function POST(request: Request) {
           firstName,
           lastName,
           email,
-          specialization: '',
+          specialization: 'General Practice',
           experience: 0,
-          qualification: '',
-          contactNumber: '',
+          qualification: 'To be updated',
+          contactNumber: 'Not provided',
           consultationFee: 0,
         });
       }
@@ -31,9 +31,7 @@ export async function POST(request: Request) {
           firstName,
           lastName,
           email,
-          dateOfBirth: new Date(),
-          gender: '',
-          contactNumber: '',
+          name: `${firstName} ${lastName}`, // Required field
         });
       }
     }
