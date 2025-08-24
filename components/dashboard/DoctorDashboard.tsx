@@ -20,6 +20,7 @@ import {
 import { motion } from 'framer-motion';
 
 import DoctorOnboarding from "@/app/doctor/onboarding/page";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Patient {
   _id: string;
@@ -44,12 +45,28 @@ interface Appointment {
   diagnosis?: string;
 }
 
+const specializations = [
+  'Cardiology',
+  'Dermatology',
+  'Gastroenterology',
+  'Neurology',
+  'Orthopedics',
+  'Pediatrics',
+  'Radiology',
+  'Urology',
+  'General Practice'
+];
+
 export default function DoctorDashboard() {
   const { user } = useUser();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [doctorInfo, setDoctorInfo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+  const [formData, setFormData] = useState({
+    specialization: '',
+    experience: ''
+  });
 
   useEffect(() => {
     fetchData();
@@ -453,6 +470,30 @@ export default function DoctorDashboard() {
           <DoctorOnboarding />
         )}
       </div>
+    </div>
+  );
+}
+
+export function DoctorProfile({ clerkId }: { clerkId: string }) {
+  const [doctor, setDoctor] = useState<any>(null);
+
+  useEffect(() => {
+    async function fetchDoctor() {
+      const res = await fetch(`/api/doctor/profile`);
+      const data = await res.json();
+      setDoctor(data.doctor);
+    }
+    fetchDoctor();
+  }, []);
+
+  if (!doctor) return <div>Loading...</div>;
+
+  return (
+    <div>
+      {/* ...doctor info... */}
+      {doctor.profileCompleted && (
+        <span className="text-green-600 font-bold mt-4">Profile Completed</span>
+      )}
     </div>
   );
 }

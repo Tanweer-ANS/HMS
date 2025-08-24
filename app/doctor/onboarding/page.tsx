@@ -144,9 +144,18 @@ export default function DoctorOnboarding() {
                       </SelectContent>
                     </Select> */}
                     <Select value={formData.specialization} onValueChange={value => setFormData({ ...formData, specialization: value })}>
-                      {specializations.map(spec => (
-                        <SelectItem key={spec} value={spec}>{spec}</SelectItem>
-                      ))}
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select specialization">
+                          {formData.specialization}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {specializations.map(spec => (
+                          <SelectItem key={spec} value={spec}>
+                            {spec}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
                     </Select>
                   </div>
 
