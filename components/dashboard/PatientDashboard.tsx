@@ -292,7 +292,7 @@ export default function PatientDashboard() {
                 </CardHeader>
               </Card>
 
-              <Link href="/report-analysis" passHref>
+              <Link href="/analytics" passHref>
                 <Card className="cursor-pointer hover:shadow-lg transition-shadow">
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
