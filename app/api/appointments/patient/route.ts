@@ -1,9 +1,67 @@
 import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
 import connectDB from '@/lib/mongodb';
 import Patient from '@/models/Patient';
+import Appointment from '@/models/Appointment';
+import Doctor from '@/models/Doctor';
+
+export async function GET() {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    await connectDB();
+    
+    // Find the patient by clerkId
+    const patient = await Patient.findOne({ clerkId: userId });
+    if (!patient) {
+      return NextResponse.json({ error: 'Patient not found' }, { status: 404 });
+    }
+
+    // Fetch appointments for this patient with doctor details
+    const appointments = await Appointment.find({ patientId: patient._id })
+      .populate('doctorId', 'firstName lastName specialization experience qualification consultationFee rating totalPatients biography availableSlots')
+      .sort({ appointmentDate: -1 });
+
+    // Transform the data to match the expected format
+    const transformedAppointments = appointments.map(apt => ({
+      _id: apt._id,
+      doctor: {
+        _id: apt.doctorId._id,
+        firstName: apt.doctorId.firstName,
+        lastName: apt.doctorId.lastName,
+        specialization: apt.doctorId.specialization,
+        experience: apt.doctorId.experience,
+        qualification: apt.doctorId.qualification,
+        consultationFee: apt.doctorId.consultationFee,
+        rating: apt.doctorId.rating,
+        totalPatients: apt.doctorId.totalPatients,
+        biography: apt.doctorId.biography,
+        availableSlots: apt.doctorId.availableSlots || []
+      },
+      appointmentDate: apt.appointmentDate,
+      appointmentTime: apt.appointmentTime,
+      status: apt.status,
+      reason: apt.reason,
+      consultationFee: apt.consultationFee
+    }));
+
+    return NextResponse.json({ appointments: transformedAppointments });
+  } catch (error) {
+    console.error('Error fetching patient appointments:', error);
+    return NextResponse.json({ error: 'Failed to fetch appointments' }, { status: 500 });
+  }
+}
 
 export async function PUT(request: Request) {
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     await connectDB();
     const data = await request.json();
     const { clerkId, ...updateData } = data;
@@ -35,7 +93,7 @@ export async function PUT(request: Request) {
     }
 
     const updatedPatient = await Patient.findOneAndUpdate(
-      { clerkId },
+      { clerkId: userId },
       updateData,
       { new: true, runValidators: true }
     );

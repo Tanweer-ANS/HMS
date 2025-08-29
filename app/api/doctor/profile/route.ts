@@ -1,70 +1,52 @@
-import connectDB from "@/lib/mongodb";
-import Doctor from "@/models/Doctor";
-import { NextRequest } from "next/server";
+import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
+import connectDB from '@/lib/mongodb';
+import Doctor from '@/models/Doctor';
 
-export async function PUT(req: NextRequest) {
+export async function GET() {
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     await connectDB();
+    const doctor = await Doctor.findOne({ clerkId: userId });
 
-    const body = await req.json();
-    const {
-      clerkId,
-      specialization,
-      experience,
-      qualification,
-      contactNumber,
-      consultationFee,
-      biography,
-      availableSlots,
-    } = body;
-
-    if (
-      !clerkId ||
-      !specialization ||
-      !experience ||
-      !qualification ||
-      !contactNumber ||
-      !consultationFee
-    ) {
-      return new Response(JSON.stringify({ message: "Missing required fields" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+    if (!doctor) {
+      return NextResponse.json({ error: 'Doctor not found' }, { status: 404 });
     }
 
-    try {
-      const doctorData = {
-        clerkUserId: clerkId,
-        specialization,
-        experience,
-        qualification,
-        contactNumber,
-        consultationFee,
-        biography,
-        availableSlots,
-      };
+    return NextResponse.json({ doctor });
+  } catch (error) {
+    console.error('Error fetching doctor profile:', error);
+    return NextResponse.json({ error: 'Failed to fetch profile' }, { status: 500 });
+  }
+}
 
-      const doctor = await Doctor.findOneAndUpdate(
-        { clerkUserId: clerkId },
-        doctorData,
-        { upsert: true, new: true }
-      );
-
-      return new Response(JSON.stringify({ success: true, doctor }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      });
-    } catch (error: any) {
-      console.error("Error saving doctor profile:", error);
-      return new Response(JSON.stringify({ message: "Internal server error" }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
+export async function PUT(request: Request) {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-  } catch (error: any) {
-    return new Response(JSON.stringify({ message: "Unexpected error", error: error.message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+
+    await connectDB();
+    const data = await request.json();
+    const { clerkId, ...updateData } = data;
+
+    const doctor = await Doctor.findOneAndUpdate(
+      { clerkId: userId },
+      updateData,
+      { new: true }
+    );
+    if (!doctor) {
+      return NextResponse.json({ error: 'Doctor not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, doctor , message: "Doctor is present" });
+  } catch (error) {
+    console.error('Error updating doctor profile:', error);
+    return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 });
   }
 }

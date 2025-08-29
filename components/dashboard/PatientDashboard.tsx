@@ -20,6 +20,7 @@ import {
 import { motion } from 'framer-motion';
 
 import Link from "next/link"; 
+import PatientProfile from './PatientProfile';
 
 interface Doctor {
   _id: string;
@@ -55,6 +56,13 @@ export default function PatientDashboard() {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
+  const [bookingData, setBookingData] = useState({
+    appointmentDate: '',
+    appointmentTime: '',
+    reason: ''
+  });
 
   useEffect(() => {
     fetchData();
@@ -76,6 +84,51 @@ export default function PatientDashboard() {
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleBookAppointment = (doctorId: string) => {
+    const doctor = doctors.find(d => d._id === doctorId);
+    if (doctor) {
+      setSelectedDoctor(doctor);
+      setShowBookingModal(true);
+    }
+  };
+
+  const handleBookingSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedDoctor) return;
+
+    try {
+      const response = await fetch('/api/appointments/book', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          doctorId: selectedDoctor._id,
+          appointmentDate: bookingData.appointmentDate,
+          appointmentTime: bookingData.appointmentTime,
+          reason: bookingData.reason,
+          consultationFee: selectedDoctor.consultationFee
+        }),
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        setShowBookingModal(false);
+        setSelectedDoctor(null);
+        setBookingData({ appointmentDate: '', appointmentTime: '', reason: '' });
+        // Refresh appointments
+        fetchData();
+        alert('Appointment booked successfully!');
+      } else {
+        alert(result.error || 'Failed to book appointment');
+      }
+    } catch (error) {
+      console.error('Error booking appointment:', error);
+      alert('Failed to book appointment');
     }
   };
 
@@ -368,7 +421,7 @@ export default function PatientDashboard() {
                     )}
                     <Button 
                       className="w-full bg-blue-600 hover:bg-blue-700"
-                      onClick={() => {/* Handle appointment booking */}}
+                      onClick={() => handleBookAppointment(doctor._id)}
                     >
                       Book Appointment
                     </Button>
@@ -434,6 +487,84 @@ export default function PatientDashboard() {
               )}
             </div>
           </motion.div>
+        )}
+
+        {activeTab === 'profile' && (
+          <PatientProfile />
+        )}
+
+        {/* Booking Modal */}
+        {showBookingModal && selectedDoctor && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+              <h3 className="text-lg font-semibold mb-4">
+                Book Appointment with Dr. {selectedDoctor.firstName} {selectedDoctor.lastName}
+              </h3>
+              <form onSubmit={handleBookingSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Date
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    value={bookingData.appointmentDate}
+                    onChange={(e) => setBookingData({...bookingData, appointmentDate: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    min={new Date().toISOString().split('T')[0]}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Time
+                  </label>
+                  <select
+                    required
+                    value={bookingData.appointmentTime}
+                    onChange={(e) => setBookingData({...bookingData, appointmentTime: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Select time</option>
+                    <option value="09:00">09:00 AM</option>
+                    <option value="10:00">10:00 AM</option>
+                    <option value="11:00">11:00 AM</option>
+                    <option value="14:00">02:00 PM</option>
+                    <option value="15:00">03:00 PM</option>
+                    <option value="16:00">04:00 PM</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Reason for Visit
+                  </label>
+                  <textarea
+                    required
+                    value={bookingData.reason}
+                    onChange={(e) => setBookingData({...bookingData, reason: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={3}
+                    placeholder="Describe your symptoms or reason for visit..."
+                  />
+                </div>
+                <div className="flex justify-end space-x-3 pt-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setShowBookingModal(false);
+                      setSelectedDoctor(null);
+                      setBookingData({ appointmentDate: '', appointmentTime: '', reason: '' });
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                    Book Appointment
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </div>
         )}
       </div>
     </div>
