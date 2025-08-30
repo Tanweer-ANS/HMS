@@ -1,10 +1,12 @@
 import Doctor from "@/models/Doctor";
 import Patient from "@/models/Patient";
 import connectDB from "@/lib/mongodb";
+import { NextRequest, NextResponse } from "next/server";
 
-export default async function handler(req:any, res:any): Promise<void> {
+export async function POST(req: NextRequest) {
   await connectDB();
-  const { clerkId, firstName, lastName, role, ...rest } = req.body;
+  const body = await req.json();
+  const { clerkId, firstName, lastName, role, ...rest } = body;
 
   if (role === "doctor") {
     await Doctor.updateOne(
@@ -19,5 +21,5 @@ export default async function handler(req:any, res:any): Promise<void> {
       { upsert: true }
     );
   }
-  res.status(200).json({ success: true });
+  return NextResponse.json({ success: true });
 }

@@ -33,7 +33,7 @@ export async function PUT(request: Request) {
 
     await connectDB();
     const data = await request.json();
-    const { clerkId, ...updateData } = data;
+    const updateData = data;
 
     const doctor = await Doctor.findOneAndUpdate(
       { clerkId: userId },

@@ -86,7 +86,7 @@ export default function RoleSelection() {
                 <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
                   <UserCheck className="h-8 w-8 text-blue-600" />
                 </div>
-                <CardTitle className="text-2xl text-gray-900">I'm a Patient</CardTitle>
+                <CardTitle className="text-2xl text-gray-900">I&#39;m a Patient</CardTitle>
               </CardHeader>
               <CardContent className="text-center">
                 <CardDescription className="text-lg text-gray-600 mb-6">
@@ -127,7 +127,7 @@ export default function RoleSelection() {
                 <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
                   <Stethoscope className="h-8 w-8 text-green-600" />
                 </div>
-                <CardTitle className="text-2xl text-gray-900">I'm a Healthcare Provider</CardTitle>
+                <CardTitle className="text-2xl text-gray-900">I&#39;m a Healthcare Provider</CardTitle>
               </CardHeader>
               <CardContent className="text-center">
                 <CardDescription className="text-lg text-gray-600 mb-6">

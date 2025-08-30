@@ -1,20 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useUser, UserButton } from '@clerk/nextjs';
+import { useUser} from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
   Calendar, 
   Clock, 
-  Heart, 
+ 
   User, 
   Stethoscope,
   Plus,
   Search,
   Filter,
-  MapPin,
+
   Star
 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -207,7 +207,7 @@ export default function PatientDashboard() {
                 Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'}, {user?.firstName}!
               </h1>
               <p className="text-blue-100 text-lg">
-                Your health journey continues. Let's make today count.
+                Your health journey continues. Let&apos;s make today count.
               </p>
             </div>
 

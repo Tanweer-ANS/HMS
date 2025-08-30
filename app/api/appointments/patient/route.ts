@@ -3,7 +3,6 @@ import { auth } from '@clerk/nextjs/server';
 import connectDB from '@/lib/mongodb';
 import Patient from '@/models/Patient';
 import Appointment from '@/models/Appointment';
-import Doctor from '@/models/Doctor';
 
 export async function GET() {
   try {
@@ -64,7 +63,7 @@ export async function PUT(request: Request) {
 
     await connectDB();
     const data = await request.json();
-    const { clerkId, ...updateData } = data;
+    const updateData = { ...data };
 
     // Calculate age from date of birth if provided
     if (updateData.dateOfBirth) {

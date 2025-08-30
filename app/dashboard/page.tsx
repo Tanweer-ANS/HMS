@@ -5,7 +5,7 @@ import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import PatientDashboard from '@/components/dashboard/PatientDashboard';
 import DoctorDashboard from '@/components/dashboard/DoctorDashboard';
-// import LoadingSpinner from '@/components/ui/loading-spinner';
+
 
 export default function Dashboard() {
   const { user, isLoaded } = useUser();

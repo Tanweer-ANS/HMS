@@ -143,7 +143,7 @@ export default function DoctorOnboarding() {
                         ))}
                       </SelectContent>
                     </Select> */}
-                    <Select value={formData.specialization} onValueChange={value => setFormData({ ...formData, specialization: value })}>
+                    <Select value={formData.specialization} onValueChange={(value: string) => setFormData({ ...formData, specialization: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select specialization">
                           {formData.specialization}
@@ -165,7 +165,7 @@ export default function DoctorOnboarding() {
                       id="experience"
                       type="number"
                       value={formData.experience}
-                      onChange={(e: any) => setFormData(prev => ({ ...prev, experience: e.target.value }))}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, experience: e.target.value }))}
                       placeholder="e.g., 5"
                       required
                     />
@@ -176,7 +176,7 @@ export default function DoctorOnboarding() {
                     <Input
                       id="qualification"
                       value={formData.qualification}
-                      onChange={(e: any) => setFormData(prev => ({ ...prev, qualification: e.target.value }))}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, qualification: e.target.value }))}
                       placeholder="e.g., MBBS, MD"
                       required
                     />
@@ -187,7 +187,7 @@ export default function DoctorOnboarding() {
                     <Input
                       id="contactNumber"
                       value={formData.contactNumber}
-                      onChange={(e: any) => setFormData(prev => ({ ...prev, contactNumber: e.target.value }))}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, contactNumber: e.target.value }))}
                       placeholder="+1 (555) 123-4567"
                       required
                     />
@@ -199,7 +199,7 @@ export default function DoctorOnboarding() {
                       id="consultationFee"
                       type="number"
                       value={formData.consultationFee}
-                      onChange={(e: any) => setFormData(prev => ({ ...prev, consultationFee: e.target.value }))}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, consultationFee: e.target.value }))}
                       placeholder="100"
                       required
                     />
@@ -211,7 +211,7 @@ export default function DoctorOnboarding() {
                   <Textarea
                     id="biography"
                     value={formData.biography}
-                    onChange={(e: any) => setFormData(prev => ({ ...prev, biography: e.target.value }))}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData(prev => ({ ...prev, biography: e.target.value }))}
                     placeholder="Tell patients about yourself, your approach to healthcare, and your experience..."
                     rows={4}
                   />
@@ -228,7 +228,7 @@ export default function DoctorOnboarding() {
                           <div>
                             <Select
                               value={slot?.startTime || ''}
-                              onValueChange={(value: any) => handleSlotChange(day, 'startTime', value)}
+                              onValueChange={(value: string) => handleSlotChange(day, 'startTime', value)}
                             >
                               <SelectTrigger>
                                 <SelectValue placeholder="Start time" />
@@ -243,7 +243,7 @@ export default function DoctorOnboarding() {
                           <div>
                             <Select
                               value={slot?.endTime || ''}
-                              onValueChange={(value: any) => handleSlotChange(day, 'endTime', value)}
+                              onValueChange={(value: string) => handleSlotChange(day, 'endTime', value)}
                             >
                               <SelectTrigger>
                                 <SelectValue placeholder="End time" />

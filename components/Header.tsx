@@ -2,8 +2,7 @@ import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import {
   SignInButton,
-  SignUpButton,
-  SignOutButton,
+  SignUpButton
 } from '@clerk/nextjs'
 import { Heart } from "lucide-react";
 

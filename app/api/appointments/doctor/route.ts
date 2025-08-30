@@ -3,7 +3,7 @@ import { auth } from '@clerk/nextjs/server';
 import connectDB from '@/lib/mongodb';
 import Doctor from '@/models/Doctor';
 import Appointment from '@/models/Appointment';
-import Patient from '@/models/Patient';
+
 
 export async function GET() {
   try {

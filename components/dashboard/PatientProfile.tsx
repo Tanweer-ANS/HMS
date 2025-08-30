@@ -8,11 +8,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+  import { useCallback } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { 
   User, 
   Phone, 
-  Mail, 
+
   MapPin, 
   Calendar, 
   Edit, 
@@ -110,11 +111,9 @@ export default function PatientProfile() {
     }
   });
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
 
-  const fetchProfile = async () => {
+
+  const fetchProfile = useCallback(async () => {
     try {
       const response = await fetch('/api/patients/profile');
       const data = await response.json();
@@ -154,7 +153,11 @@ export default function PatientProfile() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   const handleSave = async () => {
     setSaving(true);

@@ -36,7 +36,7 @@ export default function AnalyticsPage() {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             setResult(res.data.summary);
-        } catch (err: any) {
+        } catch (err) {
             console.error(err);
             setResult("Error analyzing report. Please try again.");
         } finally {

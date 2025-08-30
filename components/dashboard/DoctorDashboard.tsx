@@ -1,26 +1,25 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useUser, UserButton } from '@clerk/nextjs';
+import { useUser} from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
   Calendar,
   Clock,
-  Heart,
+
   User,
   TrendingUp,
   Users,
   DollarSign,
-  Activity,
+
   CheckCircle,
-  AlertCircle
+
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 import DoctorOnboarding from "@/app/doctor/onboarding/page";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Patient {
   _id: string;
@@ -45,28 +44,28 @@ interface Appointment {
   diagnosis?: string;
 }
 
-const specializations = [
-  'Cardiology',
-  'Dermatology',
-  'Gastroenterology',
-  'Neurology',
-  'Orthopedics',
-  'Pediatrics',
-  'Radiology',
-  'Urology',
-  'General Practice'
-];
+// const specializations = [
+//   'Cardiology',
+//   'Dermatology',
+//   'Gastroenterology',
+//   'Neurology',
+//   'Orthopedics',
+//   'Pediatrics',
+//   'Radiology',
+//   'Urology',
+//   'General Practice'
+// ];
 
 export default function DoctorDashboard() {
   const { user } = useUser();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [doctorInfo, setDoctorInfo] = useState<any>(null);
+  const [doctorInfo, setDoctorInfo] = useState<Doctor | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
-  const [formData, setFormData] = useState({
-    specialization: '',
-    experience: ''
-  });
+  // const [formData, setFormData] = useState({
+  //   specialization: '',
+  //   experience: ''
+  // });
 
   useEffect(() => {
     fetchData();
@@ -133,7 +132,7 @@ export default function DoctorDashboard() {
             <div className="flex items-center space-x-4">
               {/* <Heart className="h-8 w-8 text-green-600" />
               <span className="text-xl font-bold text-gray-900">HealthCare Plus</span> */}
-              <span className="text-sm text-gray-500">Doctor Portal</span>
+              <span className="text-sm text-gray-500">Doctor&nbsp;Portal</span>
             </div>
 
             <nav className="hidden md:flex space-x-8">
@@ -170,7 +169,7 @@ export default function DoctorDashboard() {
             {/* Welcome Section */}
             <div className="bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl p-8 text-white">
               <h1 className="text-3xl font-bold mb-2">
-                Welcome back, Dr. {user?.firstName}!
+                Welcome back, Dr.&nbsp;{user?.firstName}!
               </h1>
               <p className="text-green-100 text-lg">
                 You have {todayAppointments.length} appointments scheduled for today.
@@ -255,7 +254,7 @@ export default function DoctorDashboard() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
-                    <span>Today's Schedule</span>
+                    <span>Today&apos;s Schedule</span>
                     <Badge variant="secondary">{todayAppointments.length} appointments</Badge>
                   </CardTitle>
                 </CardHeader>
@@ -294,7 +293,7 @@ export default function DoctorDashboard() {
                           className="w-full"
                           onClick={() => setActiveTab('appointments')}
                         >
-                          View All Today's Appointments
+                          View All Today&apos;s Appointments
                         </Button>
                       )}
                     </div>
@@ -474,8 +473,16 @@ export default function DoctorDashboard() {
   );
 }
 
-export function DoctorProfile({ clerkId }: { clerkId: string }) {
-  const [doctor, setDoctor] = useState<any>(null);
+interface Doctor {
+  specialization?: string;
+  experience?: number;
+  totalPatients?: number;
+  profileCompleted?: boolean;
+  // Add other fields as needed
+}
+
+export function DoctorProfile() {
+  const [doctor, setDoctor] = useState<Doctor | null>(null);
 
   useEffect(() => {
     async function fetchDoctor() {

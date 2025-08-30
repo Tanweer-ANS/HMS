@@ -2,13 +2,14 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Heart, Shield, Users, Clock, Star, CheckCircle } from 'lucide-react';
+import { ArrowRight, Heart, Shield, Users, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useUser } from '@clerk/nextjs';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import  {SignInButton,SignUpButton,SignedIn,SignedOut,UserButton} from '@clerk/nextjs'
+import Image from 'next/image';
+
 
 const features = [
   {
@@ -41,7 +42,7 @@ const stats = [
 ];
 
 export default function Home() {
-  const { isSignedIn, user } = useUser();
+  const { isSignedIn } = useUser();
   const router = useRouter();
 
   useEffect(() => {
@@ -90,14 +91,17 @@ export default function Home() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="mt-12 lg:mt-0"
             >
-              <div className="relative">
+                <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-green-400 rounded-2xl blur-2xl opacity-20 animate-pulse"></div>
-                <img
+                <Image
                   src="https://images.pexels.com/photos/4021775/pexels-photo-4021775.jpeg?auto=compress&cs=tinysrgb&w=800"
                   alt="Healthcare Professional"
                   className="relative rounded-2xl shadow-2xl w-full object-cover h-96 lg:h-auto"
+                  width={800}
+                  height={600}
+                  priority
                 />
-              </div>
+                </div>
             </motion.div>
           </div>
         </div>
@@ -131,7 +135,7 @@ export default function Home() {
               Why Choose HealthCare Plus?
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We're transforming healthcare delivery with innovative technology and compassionate care.
+              We&#39;re transforming healthcare delivery with innovative technology and compassionate care.
             </p>
           </div>
           
