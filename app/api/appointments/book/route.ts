@@ -19,7 +19,8 @@ export async function POST(request: Request) {
     // Find the patient by clerkId
     const patient = await Patient.findOne({ clerkId: userId });
     if (!patient) {
-      return NextResponse.json({ error: 'Patient not found' }, { status: 404 });
+      // Avoid 404 to prevent noisy console errors on the client
+      return NextResponse.json({ success: false, error: 'Please complete your patient profile before booking.' });
     }
 
     // Verify the doctor exists

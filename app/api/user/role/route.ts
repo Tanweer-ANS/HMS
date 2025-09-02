@@ -7,33 +7,42 @@ export async function POST(request: Request) {
   try {
     await connectDB();
     const { clerkId, role, email, firstName, lastName } = await request.json();
+  
 
     if (role === 'doctor') {
-      const existingDoctor = await Doctor.findOne({ clerkId });
-      if (!existingDoctor) {
-        await Doctor.create({
-          clerkId,
-          firstName,
-          lastName,
-          email,
-          specialization: 'General Practice',
-          experience: 0,
-          qualification: 'To be updated',
-          contactNumber: 'Not provided',
-          consultationFee: 0,
-        });
-      }
+      const safeEmail = email || `${clerkId}@noemail.local`;
+      await Doctor.findOneAndUpdate(
+        { clerkId },
+        {
+          $setOnInsert: {
+            clerkUserId: clerkId,
+            clerkId,
+            firstName: firstName || 'Doctor',
+            lastName: lastName || 'User',
+            email: safeEmail,
+            specialization: 'General Practice',
+            experience: 0,
+            qualification: 'To be updated',
+            contactNumber: 'Not provided',
+            consultationFee: 0,
+            profileCompleted: false,
+            isActive: true,
+          },
+        },
+        { new: true, upsert: true }
+      );
     } else if (role === 'patient') {
-      const existingPatient = await Patient.findOne({ clerkId });
-      if (!existingPatient) {
-        await Patient.create({
-          clerkId,
-          firstName,
-          lastName,
-          email,
-          name: `${firstName} ${lastName}`, // Required field
-        });
-      }
+      await Patient.findOneAndUpdate(
+        { clerkId },
+        {
+          $setOnInsert: {
+            clerkId,
+            name: `${firstName || ''} ${lastName || ''}`.trim() || 'New Patient',
+            email: email || '',
+          },
+        },
+        { new: true, upsert: true }
+      );
     }
 
     return NextResponse.json({ success: true });

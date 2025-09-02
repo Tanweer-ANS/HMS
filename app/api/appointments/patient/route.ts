@@ -16,7 +16,8 @@ export async function GET() {
     // Find the patient by clerkId
     const patient = await Patient.findOne({ clerkId: userId });
     if (!patient) {
-      return NextResponse.json({ error: 'Patient not found' }, { status: 404 });
+      // If no patient profile yet, return empty list for smoother UX
+      return NextResponse.json({ appointments: [] });
     }
 
     // Fetch appointments for this patient with doctor details
@@ -63,7 +64,7 @@ export async function PUT(request: Request) {
 
     await connectDB();
     const data = await request.json();
-    const updateData = { ...data };
+    const updateData = { ...data } as any;
 
     // Calculate age from date of birth if provided
     if (updateData.dateOfBirth) {
@@ -79,22 +80,18 @@ export async function PUT(request: Request) {
       }
     }
 
-    // Format address as a single string if it's an object
-    if (updateData.address && typeof updateData.address === 'object') {
-      const { street, city, state, zipCode } = updateData.address;
-      updateData.address = [street, city, state, zipCode].filter(Boolean).join(', ');
-    }
+    // Keep address as nested object per Patient schema (street/city/state/zipCode)
 
-    // Format phone number
-    if (updateData.contactNumber) {
+    // Ensure phone in `phone`
+    if (updateData.contactNumber && !updateData.phone) {
       updateData.phone = updateData.contactNumber;
-      delete updateData.contactNumber;
     }
 
+    // Upsert so new patients can be created from this endpoint too
     const updatedPatient = await Patient.findOneAndUpdate(
       { clerkId: userId },
-      updateData,
-      { new: true, runValidators: true }
+      { $set: { ...updateData }, $setOnInsert: { clerkId: userId } },
+      { new: true, runValidators: true, upsert: true }
     );
 
     if (!updatedPatient) {

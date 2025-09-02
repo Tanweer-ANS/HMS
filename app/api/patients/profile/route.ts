@@ -14,7 +14,8 @@ export async function GET() {
     const patient = await Patient.findOne({ clerkId: userId });
 
     if (!patient) {
-      return NextResponse.json({ error: 'Patient not found' }, { status: 404 });
+      // Return empty profile instead of 404 for smoother UX
+      return NextResponse.json({ patient: null });
     }
 
     return NextResponse.json({ patient });
@@ -33,7 +34,7 @@ export async function PUT(request: Request) {
 
     await connectDB();
     const data = await request.json();
-    const updateData = data;
+    const updateData = { ...data } as any;
 
     // Calculate age from date of birth if provided
     if (updateData.dateOfBirth) {
@@ -49,22 +50,13 @@ export async function PUT(request: Request) {
       }
     }
 
-    // Format address as a single string if it's an object
-    if (updateData.address && typeof updateData.address === 'object') {
-      const { street, city, state, zipCode } = updateData.address;
-      updateData.address = [street, city, state, zipCode].filter(Boolean).join(', ');
-    }
-
-    // Format phone number
-    if (updateData.contactNumber) {
-      updateData.phone = updateData.contactNumber;
-      delete updateData.contactNumber;
-    }
-
+    // Ensure phone comes through as-is; frontend already sends `phone`
+    // Keep address as nested object per schema
+    // Upsert so that a missing patient record is created on first save
     const patient = await Patient.findOneAndUpdate(
       { clerkId: userId },
-      updateData,
-      { new: true, runValidators: true }
+      { $set: { ...updateData }, $setOnInsert: { clerkId: userId } },
+      { new: true, runValidators: true, upsert: true }
     );
 
     if (!patient) {

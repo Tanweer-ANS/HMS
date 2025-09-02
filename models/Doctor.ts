@@ -1,6 +1,13 @@
 import mongoose from 'mongoose';
 
 const DoctorSchema = new mongoose.Schema({
+  // Backward-compatibility field for legacy unique index
+  clerkUserId: {
+    type: String,
+    default: null,
+    index: true,
+    unique: false,
+  },
   clerkId: {
     type: String,
     required: true,

@@ -33,12 +33,21 @@ export async function PUT(request: Request) {
 
     await connectDB();
     const data = await request.json();
-    const updateData = data;
+    const updateData = { ...data } as any;
 
+    // Parse numeric fields defensively
+    if (typeof updateData.experience === 'string') {
+      updateData.experience = parseInt(updateData.experience, 10) || 0;
+    }
+    if (typeof updateData.consultationFee === 'string') {
+      updateData.consultationFee = parseInt(updateData.consultationFee, 10) || 0;
+    }
+
+    // Upsert to ensure doctor doc exists after role selection
     const doctor = await Doctor.findOneAndUpdate(
       { clerkId: userId },
-      updateData,
-      { new: true }
+      { $set: { ...updateData, profileCompleted: true, isActive: true, clerkUserId: userId } },
+      { new: true, upsert: true, runValidators: true }
     );
     if (!doctor) {
       return NextResponse.json({ error: 'Doctor not found' }, { status: 404 });
