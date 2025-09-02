@@ -6,7 +6,7 @@ const DoctorSchema = new mongoose.Schema({
     type: String,
     default: null,
     index: true,
-    unique: false,
+    unique: true,
   },
   clerkId: {
     type: String,

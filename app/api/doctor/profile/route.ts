@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import connectDB from '@/lib/mongodb';
 import Doctor from '@/models/Doctor';
 
@@ -43,12 +43,38 @@ export async function PUT(request: Request) {
       updateData.consultationFee = parseInt(updateData.consultationFee, 10) || 0;
     }
 
-    // Upsert to ensure doctor doc exists after role selection
-    const doctor = await Doctor.findOneAndUpdate(
-      { clerkId: userId },
-      { $set: { ...updateData, profileCompleted: true, isActive: true, clerkUserId: userId } },
-      { new: true, upsert: true, runValidators: true }
-    );
+    // Ensure a doctor doc exists; if not, create one with required fields
+    let doctor = await Doctor.findOne({ clerkId: userId });
+    if (!doctor) {
+      const user = await currentUser();
+      const safeEmail = user?.emailAddresses?.[0]?.emailAddress || `${userId}@noemail.local`;
+      const firstName = user?.firstName || 'Doctor';
+      const lastName = user?.lastName || 'User';
+
+      doctor = new Doctor({
+        clerkUserId: userId,
+        clerkId: userId,
+        firstName,
+        lastName,
+        email: safeEmail,
+        specialization: updateData.specialization || 'General Practice',
+        experience: updateData.experience ?? 0,
+        qualification: updateData.qualification || 'To be updated',
+        contactNumber: updateData.contactNumber || 'Not provided',
+        consultationFee: updateData.consultationFee ?? 0,
+        availableSlots: updateData.availableSlots || [],
+        biography: updateData.biography || '',
+        profileCompleted: true,
+        isActive: true,
+      });
+      await doctor.save();
+    } else {
+      doctor = await Doctor.findOneAndUpdate(
+        { clerkId: userId },
+        { $set: { ...updateData, profileCompleted: true, isActive: true, clerkUserId: userId } },
+        { new: true, runValidators: true }
+      );
+    }
     if (!doctor) {
       return NextResponse.json({ error: 'Doctor not found' }, { status: 404 });
     }

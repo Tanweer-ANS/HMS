@@ -15,14 +15,45 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (isLoaded && user) {
-      // const role = user.publicMetadata?.role as string;
-      const role = user.unsafeMetadata?.role as string; // Use unsafeMetadata for roles
-      if (!role) {
-        router.push('/role-selection');
-      } else {
-        setUserRole(role);
-      }
-      setLoading(false);
+      const setFromProfiles = async () => {
+        try {
+          // Always validate with backend state to avoid stale/wrong role
+          const [doctorRes, patientRes] = await Promise.all([
+            fetch('/api/doctor/profile', { cache: 'no-store' }),
+            fetch('/api/patients/profile', { cache: 'no-store' })
+          ]);
+
+          if (doctorRes.ok) {
+            setUserRole('doctor');
+            return;
+          }
+
+          const patientJson = await patientRes.json().catch(() => ({}));
+          if (patientRes.ok && patientJson && patientJson.patient) {
+            setUserRole('patient');
+            return;
+          }
+
+          // Fallback to Clerk metadata if no profile docs exist yet
+          const role = (user.unsafeMetadata?.role as string) || null;
+          if (!role) {
+            router.push('/role-selection');
+          } else {
+            setUserRole(role);
+          }
+        } catch {
+          const role = (user.unsafeMetadata?.role as string) || null;
+          if (!role) {
+            router.push('/role-selection');
+          } else {
+            setUserRole(role);
+          }
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      setFromProfiles();
     }
   }, [isLoaded, user, router]);
 
