@@ -20,6 +20,7 @@ import {
 import { motion } from 'framer-motion';
 
 import DoctorOnboarding from "@/app/doctor/onboarding/page";
+import DoctorProfile from './DoctorProfile';
 import AnalyticsPage from "@/app/analytics/page"
 
 interface Patient {
@@ -467,7 +468,7 @@ export default function DoctorDashboard() {
           </motion.div>
         )}
         {activeTab === "profile" && (
-          <DoctorOnboarding />
+          <DoctorProfile />
         )}
         {activeTab === "analytics" && (
           <AnalyticsPage />
@@ -483,28 +484,4 @@ interface Doctor {
   totalPatients?: number;
   profileCompleted?: boolean;
   // Add other fields as needed
-}
-
-export function DoctorProfile() {
-  const [doctor, setDoctor] = useState<Doctor | null>(null);
-
-  useEffect(() => {
-    async function fetchDoctor() {
-      const res = await fetch(`/api/doctor/profile`);
-      const data = await res.json();
-      setDoctor(data.doctor);
-    }
-    fetchDoctor();
-  }, []);
-
-  if (!doctor) return <div>Loading...</div>;
-
-  return (
-    <div>
-      {/* ...doctor info... */}
-      {doctor.profileCompleted && (
-        <span className="text-green-600 font-bold mt-4">Profile Completed</span>
-      )}
-    </div>
-  );
 }
