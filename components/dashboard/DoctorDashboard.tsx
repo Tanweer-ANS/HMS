@@ -75,15 +75,15 @@ export default function DoctorDashboard() {
   const fetchData = async () => {
     try {
       const [appointmentsRes, doctorRes] = await Promise.all([
-        fetch('/api/appointments/doctor'),
-        fetch('/api/doctor/profile')
+        fetch('/api/appointments/doctor', { cache: 'no-store' }),
+        fetch('/api/doctor/profile', { cache: 'no-store' })
       ]);
 
       const appointmentsData = await appointmentsRes.json();
       const doctorData = await doctorRes.json();
 
       setAppointments(appointmentsData.appointments || []);
-      setDoctorInfo(doctorData.doctor || null);
+      setDoctorInfo(doctorRes.ok ? (doctorData.doctor || null) : null);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
