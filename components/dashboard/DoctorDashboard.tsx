@@ -20,6 +20,7 @@ import {
 import { motion } from 'framer-motion';
 
 import DoctorOnboarding from "@/app/doctor/onboarding/page";
+import AnalyticsPage from "@/app/analytics/page"
 
 interface Patient {
   _id: string;
@@ -467,6 +468,9 @@ export default function DoctorDashboard() {
         )}
         {activeTab === "profile" && (
           <DoctorOnboarding />
+        )}
+        {activeTab === "analytics" && (
+          <AnalyticsPage />
         )}
       </div>
     </div>
