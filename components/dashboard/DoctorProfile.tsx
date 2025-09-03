@@ -1,5 +1,6 @@
 'use client';
 
+// Import React hooks and components from various libraries
 import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,18 +9,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
-  User, 
-  Edit, 
-  Save, 
-  X,
-  Stethoscope,
-  Clock,
-  CheckCircle,
-  AlertCircle
-} from 'lucide-react';
+import { User, Edit, Save, X, Stethoscope, Clock, CheckCircle, AlertCircle} from 'lucide-react';
 import { motion } from 'framer-motion';
 
+// Define the shape of the Doctor data object using a TypeScript interface
 interface Doctor {
   _id?: string;
   clerkId?: string;
@@ -45,13 +38,19 @@ interface Doctor {
   updatedAt?: string;
 }
 
+// Main DoctorProfile component
 export default function DoctorProfile() {
+  // Get the current user from Clerk
   const { user } = useUser();
-  const [doctor, setDoctor] = useState<Doctor | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // State variables to manage component behavior and data
+  const [doctor, setDoctor] = useState<Doctor | null>(null); // Stores the doctor's profile data
+  const [loading, setLoading] = useState(true); // Manages the loading state
+  const [editing, setEditing] = useState(false); // Controls whether the form is in edit mode
+  const [saving, setSaving] = useState(false); // Manages the saving state for the save button
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null); // Displays status messages to the user
+
+  // Form data state, initialized with empty values
   const [formData, setFormData] = useState({
     specialization: '',
     experience: '',
@@ -62,6 +61,7 @@ export default function DoctorProfile() {
     availableSlots: [] as Array<{ day: string; startTime: string; endTime: string }>,
   });
 
+  // Static data arrays for dropdown menus
   const specializations = [
     'General Medicine',
     'Cardiology',
@@ -85,16 +85,21 @@ export default function DoctorProfile() {
 
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
+  // useEffect hook to fetch doctor data on component mount
   useEffect(() => {
     fetchDoctor();
-  }, []);
+  }, []); // The empty dependency array ensures this runs only once
 
+  // Asynchronous function to fetch the doctor's profile from the API
   const fetchDoctor = async () => {
     try {
+      // Fetch data from the local API route
       const res = await fetch('/api/doctor/profile', { cache: 'no-store' });
       const data = await res.json();
+      // If the request is successful and data exists, update state
       if (res.ok && data.doctor) {
         setDoctor(data.doctor);
+        // Set the form data state to the fetched values for editing
         setFormData({
           specialization: data.doctor.specialization || '',
           experience: data.doctor.experience?.toString() || '',
@@ -109,14 +114,18 @@ export default function DoctorProfile() {
       console.error('Error fetching doctor profile:', error);
       setMessage({ type: 'error', text: 'Failed to load profile' });
     } finally {
+      // Set loading to false once the fetch operation is complete
       setLoading(false);
     }
   };
 
+  // Handler for changing available time slots
   const handleSlotChange = (day: string, field: 'startTime' | 'endTime', value: string) => {
+    // Find the index of the existing slot for the given day
     const existingSlotIndex = formData.availableSlots.findIndex(slot => slot.day === day);
 
     if (existingSlotIndex >= 0) {
+      // If a slot for the day already exists, update it
       const updatedSlots = [...formData.availableSlots];
       updatedSlots[existingSlotIndex] = {
         ...updatedSlots[existingSlotIndex],
@@ -124,6 +133,7 @@ export default function DoctorProfile() {
       };
       setFormData(prev => ({ ...prev, availableSlots: updatedSlots }));
     } else {
+      // If no slot exists, create a new one and add it
       const newSlot = { day, startTime: '', endTime: '', [field]: value };
       setFormData(prev => ({
         ...prev,
@@ -132,16 +142,19 @@ export default function DoctorProfile() {
     }
   };
 
+  // Asynchronous function to handle saving the profile changes
   const handleSave = async () => {
     setSaving(true);
     setMessage(null);
 
     try {
+      // Send a PUT request to the API with the updated form data
       const response = await fetch('/api/doctor/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
+        // Convert experience and consultationFee to numbers before sending
         body: JSON.stringify({
           ...formData,
           experience: parseInt(formData.experience) || 0,
@@ -152,26 +165,30 @@ export default function DoctorProfile() {
       const result = await response.json();
 
       if (result.success) {
+        // On success, update the doctor state, exit editing mode, and show a success message
         setDoctor(result.doctor);
         setEditing(false);
         setMessage({ type: 'success', text: 'Profile updated successfully!' });
-        // Refresh the dashboard data
+        // Refresh the page to show the updated profile data
         window.location.reload();
       } else {
+        // On failure, show an error message
         setMessage({ type: 'error', text: result.error || 'Failed to update profile' });
       }
     } catch (error) {
       console.error('Error updating profile:', error);
       setMessage({ type: 'error', text: 'Failed to update profile' });
     } finally {
+      // Set saving to false once the operation is complete
       setSaving(false);
     }
   };
 
+  // Handler for canceling the editing process
   const handleCancel = () => {
     setEditing(false);
     setMessage(null);
-    // Reset form data to current profile
+    // Reset the form data to the original doctor's data to discard changes
     if (doctor) {
       setFormData({
         specialization: doctor.specialization || '',
@@ -185,6 +202,7 @@ export default function DoctorProfile() {
     }
   };
 
+  // Render a loading spinner while data is being fetched
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -193,19 +211,22 @@ export default function DoctorProfile() {
     );
   }
 
+  // Main component rendering logic
   return (
+    // Use framer-motion for a smooth fade-in animation
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
       className="space-y-6"
     >
-      {/* Header */}
+      {/* Header section with title and edit button */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Doctor Profile</h2>
           <p className="text-gray-600">Manage your professional information and availability</p>
         </div>
+        {/* The Edit button is only shown when not in editing mode */}
         {!editing && (
           <Button onClick={() => setEditing(true)} className="bg-green-600 hover:bg-green-700">
             <Edit className="h-4 w-4 mr-2" />
@@ -214,7 +235,7 @@ export default function DoctorProfile() {
         )}
       </div>
 
-      {/* Message */}
+      {/* Message display for success or error feedback */}
       {message && (
         <div className={`p-4 rounded-lg flex items-center space-x-2 ${
           message.type === 'success' 
@@ -230,9 +251,9 @@ export default function DoctorProfile() {
         </div>
       )}
 
-      {/* Profile Information */}
+      {/* Grid layout for profile information cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Personal Information */}
+        {/* Personal Information Card */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
@@ -241,6 +262,7 @@ export default function DoctorProfile() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* Display first and last name (non-editable) */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="firstName">First Name</Label>
@@ -252,11 +274,13 @@ export default function DoctorProfile() {
               </div>
             </div>
 
+            {/* Display email (non-editable) */}
             <div>
               <Label htmlFor="email">Email</Label>
               <p className="text-sm text-gray-900 mt-1">{doctor?.email || 'Not provided'}</p>
             </div>
 
+            {/* Specialization field: display or select based on editing mode */}
             <div>
               <Label htmlFor="specialization">Specialization</Label>
               {editing ? (
@@ -277,6 +301,7 @@ export default function DoctorProfile() {
               )}
             </div>
 
+            {/* Experience and Qualification fields (editable) */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="experience">Years of Experience</Label>
@@ -307,6 +332,7 @@ export default function DoctorProfile() {
               </div>
             </div>
 
+            {/* Contact Number and Consultation Fee fields (editable) */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="contactNumber">Contact Number</Label>
@@ -339,7 +365,7 @@ export default function DoctorProfile() {
           </CardContent>
         </Card>
 
-        {/* Biography */}
+        {/* Biography Card */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
@@ -348,6 +374,7 @@ export default function DoctorProfile() {
             </CardTitle>
           </CardHeader>
           <CardContent>
+            {/* Biography textarea (editable) or plain text display */}
             {editing ? (
               <Textarea
                 value={formData.biography}
@@ -362,7 +389,7 @@ export default function DoctorProfile() {
         </Card>
       </div>
 
-      {/* Available Time Slots */}
+      {/* Available Time Slots Card */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
@@ -372,12 +399,15 @@ export default function DoctorProfile() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
+            {/* Map over days to create a row for each day */}
             {days.map((day) => {
+              // Find the corresponding slot for the current day
               const slot = formData.availableSlots.find(s => s.day === day);
               return (
                 <div key={day} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center p-4 border rounded-lg">
                   <div className="font-medium">{day}</div>
                   <div>
+                    {/* Start time selection: display or select dropdown */}
                     {editing ? (
                       <Select
                         value={slot?.startTime || ''}
@@ -397,6 +427,7 @@ export default function DoctorProfile() {
                     )}
                   </div>
                   <div>
+                    {/* End time selection: display or select dropdown */}
                     {editing ? (
                       <Select
                         value={slot?.endTime || ''}
@@ -422,7 +453,7 @@ export default function DoctorProfile() {
         </CardContent>
       </Card>
 
-      {/* Action Buttons */}
+      {/* Action Buttons: Save and Cancel */}
       {editing && (
         <div className="flex justify-end space-x-3 pt-6">
           <Button
