@@ -133,7 +133,7 @@ export default function DoctorDashboard() {
 
             {/* Tab navigation */}
             <nav className="hidden md:flex space-x-8">
-              {['overview', 'appointments', 'patients', 'analytics', 'profile'].map((tab) => (
+              {['overview', 'appointments', 'chats', 'analytics', 'profile'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -215,7 +215,7 @@ export default function DoctorDashboard() {
                   <div className="text-3xl font-bold text-green-600 mb-1">
                     {doctorInfo?.totalPatients || 0}
                   </div>
-                  <p className="text-gray-600 text-sm">Total patients</p>
+                  <p className="text-gray-600 text-sm">Connect with patients.</p>
                 </CardContent>
               </Card>
 
@@ -475,6 +475,9 @@ export default function DoctorDashboard() {
         {activeTab === "profile" && (
           <DoctorProfile />
         )}
+
+        {/* Chats Tab: Placeholder for future chat functionality */}
+        {/* {activeTab === "chats" && ()} */}
 
         {/* Analytics Tab: Practice analytics and reports */}
         {activeTab === "analytics" && (
