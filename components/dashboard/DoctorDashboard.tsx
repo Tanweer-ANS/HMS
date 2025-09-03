@@ -1,5 +1,8 @@
 'use client';
 
+// DoctorDashboard: Main dashboard for doctors, showing appointments, stats, profile, analytics, and patient records.
+// Uses Clerk for authentication and fetches doctor/appointment data from backend APIs.
+
 import { useState, useEffect } from 'react';
 import { useUser} from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,20 +11,19 @@ import { Badge } from '@/components/ui/badge';
 import {
   Calendar,
   Clock,
-
   User,
   TrendingUp,
   Users,
   DollarSign,
-
   CheckCircle,
-
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 import DoctorOnboarding from "@/app/doctor/onboarding/page";
+import DoctorProfile from './DoctorProfile';
 import AnalyticsPage from "@/app/analytics/page"
 
+// Patient and Appointment interfaces for type safety
 interface Patient {
   _id: string;
   firstName: string;
@@ -45,33 +47,20 @@ interface Appointment {
   diagnosis?: string;
 }
 
-// const specializations = [
-//   'Cardiology',
-//   'Dermatology',
-//   'Gastroenterology',
-//   'Neurology',
-//   'Orthopedics',
-//   'Pediatrics',
-//   'Radiology',
-//   'Urology',
-//   'General Practice'
-// ];
-
+// Main DoctorDashboard component
 export default function DoctorDashboard() {
-  const { user } = useUser();
+  const { user } = useUser(); // Clerk user object
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [doctorInfo, setDoctorInfo] = useState<Doctor | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('overview');
-  // const [formData, setFormData] = useState({
-  //   specialization: '',
-  //   experience: ''
-  // });
+  const [activeTab, setActiveTab] = useState('overview'); // Tab navigation
 
+  // Fetch appointments and doctor profile on mount
   useEffect(() => {
     fetchData();
   }, []);
 
+  // Fetch data from backend APIs
   const fetchData = async () => {
     try {
       const [appointmentsRes, doctorRes] = await Promise.all([
@@ -91,6 +80,7 @@ export default function DoctorDashboard() {
     }
   };
 
+  // Helper for appointment status badge colors
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Scheduled': return 'bg-blue-100 text-blue-800';
@@ -101,21 +91,26 @@ export default function DoctorDashboard() {
     }
   };
 
+  // Filter today's appointments
   const todayAppointments = appointments.filter(apt => {
     const today = new Date().toDateString();
     return new Date(apt.appointmentDate).toDateString() === today;
   });
 
+  // Filter upcoming appointments (not cancelled, date >= today)
   const upcomingAppointments = appointments.filter(apt =>
     new Date(apt.appointmentDate) >= new Date() && apt.status !== 'Cancelled'
   ).slice(0, 5);
 
+  // Filter completed appointments
   const completedAppointments = appointments.filter(apt =>
     apt.status === 'Completed'
   );
 
+  // Calculate total revenue from completed appointments
   const totalRevenue = completedAppointments.reduce((sum, apt) => sum + apt.consultationFee, 0);
 
+  // Loading spinner while fetching data
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -124,18 +119,19 @@ export default function DoctorDashboard() {
     );
   }
 
+  // Main dashboard UI
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">
-      {/* Header */}
+      {/* Header with navigation tabs and user info */}
       <header className="bg-white shadow-sm border-b border-green-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
-              {/* <Heart className="h-8 w-8 text-green-600" />
-              <span className="text-xl font-bold text-gray-900">HealthCare Plus</span> */}
+              {/* Doctor Portal branding */}
               <span className="text-sm text-gray-500">Doctor&nbsp;Portal</span>
             </div>
 
+            {/* Tab navigation */}
             <nav className="hidden md:flex space-x-8">
               {['overview', 'appointments', 'patients', 'analytics', 'profile'].map((tab) => (
                 <button
@@ -151,15 +147,17 @@ export default function DoctorDashboard() {
               ))}
             </nav>
 
+            {/* User info */}
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-600">Dr. {user?.firstName}</span>
-              {/* <UserButton afterSignOutUrl="/" /> */}
             </div>
           </div>
         </div>
       </header>
 
+      {/* Main content area */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Overview Tab: Welcome, stats, today's/upcoming appointments, quick actions */}
         {activeTab === 'overview' && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -187,8 +185,9 @@ export default function DoctorDashboard() {
               )}
             </div>
 
-            {/* Quick Stats */}
+            {/* Quick Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Today's Appointments */}
               <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-lg flex items-center space-x-2">
@@ -204,6 +203,7 @@ export default function DoctorDashboard() {
                 </CardContent>
               </Card>
 
+              {/* Total Patients */}
               <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-lg flex items-center space-x-2">
@@ -219,6 +219,7 @@ export default function DoctorDashboard() {
                 </CardContent>
               </Card>
 
+              {/* Completed Appointments */}
               <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-lg flex items-center space-x-2">
@@ -234,6 +235,7 @@ export default function DoctorDashboard() {
                 </CardContent>
               </Card>
 
+              {/* Revenue */}
               <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-lg flex items-center space-x-2">
@@ -250,8 +252,9 @@ export default function DoctorDashboard() {
               </Card>
             </div>
 
-            {/* Today's Schedule */}
+            {/* Today's Schedule and Upcoming Appointments */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Today's Schedule */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
@@ -359,7 +362,7 @@ export default function DoctorDashboard() {
               </Card>
             </div>
 
-            {/* Quick Actions */}
+            {/* Quick Actions: Cards for navigation */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card className="cursor-pointer hover:shadow-lg transition-shadow border-green-200" onClick={() => setActiveTab('appointments')}>
                 <CardHeader>
@@ -400,6 +403,7 @@ export default function DoctorDashboard() {
           </motion.div>
         )}
 
+        {/* Appointments Tab: List and details of all appointments */}
         {activeTab === 'appointments' && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -466,9 +470,13 @@ export default function DoctorDashboard() {
             </div>
           </motion.div>
         )}
+
+        {/* Profile Tab: Doctor profile info */}
         {activeTab === "profile" && (
-          <DoctorOnboarding />
+          <DoctorProfile />
         )}
+
+        {/* Analytics Tab: Practice analytics and reports */}
         {activeTab === "analytics" && (
           <AnalyticsPage />
         )}
@@ -477,34 +485,11 @@ export default function DoctorDashboard() {
   );
 }
 
+// Doctor interface for doctorInfo state
 interface Doctor {
   specialization?: string;
   experience?: number;
   totalPatients?: number;
   profileCompleted?: boolean;
   // Add other fields as needed
-}
-
-export function DoctorProfile() {
-  const [doctor, setDoctor] = useState<Doctor | null>(null);
-
-  useEffect(() => {
-    async function fetchDoctor() {
-      const res = await fetch(`/api/doctor/profile`);
-      const data = await res.json();
-      setDoctor(data.doctor);
-    }
-    fetchDoctor();
-  }, []);
-
-  if (!doctor) return <div>Loading...</div>;
-
-  return (
-    <div>
-      {/* ...doctor info... */}
-      {doctor.profileCompleted && (
-        <span className="text-green-600 font-bold mt-4">Profile Completed</span>
-      )}
-    </div>
-  );
 }

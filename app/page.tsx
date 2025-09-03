@@ -73,7 +73,7 @@ export default function Home() {
                 Book appointments, manage medical records, and connect with healthcare professionals.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                <Link href="/sign-up">
+                <Link href="/">
                   <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto">
                     Start Your Journey
                     <ArrowRight className="ml-2 h-5 w-5" />

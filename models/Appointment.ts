@@ -52,6 +52,15 @@ const AppointmentSchema = new mongoose.Schema({
     enum: ['Pending', 'Paid', 'Refunded'],
     default: 'Pending',
   },
+  paymentIntentId: {
+    type: String,
+    default: null,
+  },
+  paymentMethod: {
+    type: String,
+    enum: ['razorpay'],
+    default: null,
+  },
 }, {
   timestamps: true,
 });
