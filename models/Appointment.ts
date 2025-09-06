@@ -1,14 +1,16 @@
 import mongoose from 'mongoose';
+import Doctor from './Doctor';
+import Patient from './Patient';
 
 const AppointmentSchema = new mongoose.Schema({
   patientId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Patient',
+    ref: Patient,
     required: true,
   },
   doctorId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Doctor',
+    ref: Doctor,
     required: true,
   },
   appointmentDate: {

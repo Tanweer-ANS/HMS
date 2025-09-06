@@ -25,28 +25,30 @@ export async function GET() {
       .populate('doctorId', 'firstName lastName specialization experience qualification consultationFee rating totalPatients biography availableSlots')
       .sort({ appointmentDate: -1 });
 
-    // Transform the data to match the expected format
-    const transformedAppointments = appointments.map(apt => ({
-      _id: apt._id,
-      doctor: {
-        _id: apt.doctor._id,
-        firstName: apt.doctorId.firstName,
-        lastName: apt.doctorId.lastName,
-        specialization: apt.doctorId.specialization,
-        experience: apt.doctorId.experience,
-        qualification: apt.doctorId.qualification,
-        consultationFee: apt.doctorId.consultationFee,
-        rating: apt.doctorId.rating,
-        totalPatients: apt.doctorId.totalPatients,
-        biography: apt.doctorId.biography,
-        availableSlots: apt.doctorId.availableSlots || []
-      },
-      appointmentDate: apt.appointmentDate,
-      appointmentTime: apt.appointmentTime,
-      status: apt.status,
-      reason: apt.reason,
-      consultationFee: apt.consultationFee
-    }));
+    // Filter out appointments where doctorId is null and transform the data
+    const transformedAppointments = appointments
+      .filter(apt => apt.doctorId) // Remove appointments with null doctorId
+      .map(apt => ({
+        _id: apt._id,
+        doctor: {
+          _id: apt.doctorId._id,
+          firstName: apt.doctorId.firstName,
+          lastName: apt.doctorId.lastName,
+          specialization: apt.doctorId.specialization,
+          experience: apt.doctorId.experience,
+          qualification: apt.doctorId.qualification,
+          consultationFee: apt.doctorId.consultationFee,
+          rating: apt.doctorId.rating,
+          totalPatients: apt.doctorId.totalPatients,
+          biography: apt.doctorId.biography,
+          availableSlots: apt.doctorId.availableSlots || []
+        },
+        appointmentDate: apt.appointmentDate,
+        appointmentTime: apt.appointmentTime,
+        status: apt.status,
+        reason: apt.reason,
+        consultationFee: apt.consultationFee
+      }));
 
     return NextResponse.json({ appointments: transformedAppointments });
   } catch (error) {

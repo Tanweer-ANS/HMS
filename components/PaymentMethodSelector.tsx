@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CreditCard, Globe, Shield, CheckCircle } from 'lucide-react';
-import PaymentForm from './PaymentForm';
+// import PaymentForm from './PaymentForm';
 import RazorpayPaymentForm from './RazorpayPaymentForm';
 
 // Define the component's props with TypeScript for better type safety
@@ -32,20 +32,10 @@ export default function PaymentMethodSelector({
   onCancel,
 }: PaymentMethodSelectorProps) {
   // State to track which payment method is currently selected
-  const [selectedMethod, setSelectedMethod] = useState<'stripe' | 'razorpay' | null>(null);
+  const [selectedMethod, setSelectedMethod] = useState< 'razorpay' | null>(null);
 
   // Array of payment method objects with their details
   const paymentMethods = [
-    {
-      id: 'stripe',
-      name: 'Stripe',
-      description: 'International payment gateway',
-      icon: Globe, // Icon for Stripe
-      features: ['Visa, Mastercard, Amex', 'USD currency', 'Global coverage'],
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
-      borderColor: 'border-green-200',
-    },
     {
       id: 'razorpay',
       name: 'Razorpay',
@@ -58,21 +48,6 @@ export default function PaymentMethodSelector({
     },
   ];
 
-  // Conditional rendering: if Stripe is selected, show the Stripe payment form
-  if (selectedMethod === 'stripe') {
-    return (
-      <PaymentForm
-        doctorId={doctorId}
-        amount={amount}
-        doctorName={doctorName}
-        appointmentDate={appointmentDate}
-        appointmentTime={appointmentTime}
-        reason={reason}
-        onSuccess={onSuccess}
-        onCancel={() => setSelectedMethod(null)} // Allows user to go back to method selection
-      />
-    );
-  }
 
   // Conditional rendering: if Razorpay is selected, show the Razorpay payment form
   if (selectedMethod === 'razorpay') {
@@ -120,7 +95,7 @@ export default function PaymentMethodSelector({
               className={`cursor-pointer transition-all hover:shadow-md border-2 ${
                 selectedMethod === method.id ? method.borderColor : 'border-gray-200'
               }`}
-              onClick={() => setSelectedMethod(method.id as 'stripe' | 'razorpay')}
+              onClick={() => setSelectedMethod(method.id as 'razorpay')}
             >
               <CardContent className="p-4">
                 {/* Method header with icon and name/description */}
