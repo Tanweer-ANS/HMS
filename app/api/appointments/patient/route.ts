@@ -29,7 +29,7 @@ export async function GET() {
     const transformedAppointments = appointments.map(apt => ({
       _id: apt._id,
       doctor: {
-        _id: apt.doctorId._id,
+        _id: apt.doctor._id,
         firstName: apt.doctorId.firstName,
         lastName: apt.doctorId.lastName,
         specialization: apt.doctorId.specialization,
