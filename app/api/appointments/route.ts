@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     }
 
     await connectDB();
-    const { appointmentId, amount } = await request.json();
+    const { appointmentId } = await request.json();
 
     if (!appointmentId) {
       return NextResponse.json({ error: 'Missing appointmentId' }, { status: 400 });

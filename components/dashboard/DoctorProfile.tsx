@@ -40,8 +40,8 @@ interface Doctor {
 
 // Main DoctorProfile component
 export default function DoctorProfile() {
-  // Get the current user from Clerk
-  const { user } = useUser();
+  // Get the current user from Clerk (unused currently)
+  useUser();
 
   // State variables to manage component behavior and data
   const [doctor, setDoctor] = useState<Doctor | null>(null); // Stores the doctor's profile data

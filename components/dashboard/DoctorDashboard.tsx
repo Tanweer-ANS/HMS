@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-import DoctorOnboarding from "@/app/doctor/onboarding/page";
+// import DoctorOnboarding from "@/app/doctor/onboarding/page";
 import DoctorProfile from './DoctorProfile';
 import AnalyticsPage from "@/app/analytics/page"
 

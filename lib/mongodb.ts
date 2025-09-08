@@ -13,7 +13,6 @@ if (!MONGODB_URI) {
  */
 declare global {
   // We must use `var` here, not `let` or `const`
-  // eslint-disable-next-line no-var
   var mongooseCache: {
     conn: Mongoose | null;
     promise: Promise<Mongoose> | null;

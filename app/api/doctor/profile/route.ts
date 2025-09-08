@@ -33,14 +33,14 @@ export async function PUT(request: Request) {
 
     await connectDB();
     const data = await request.json();
-    const updateData = { ...data } as any;
+    const updateData: Record<string, unknown> = { ...data };
 
     // Parse numeric fields defensively
-    if (typeof updateData.experience === 'string') {
-      updateData.experience = parseInt(updateData.experience, 10) || 0;
+    if (typeof updateData["experience"] === 'string') {
+      updateData["experience"] = parseInt(updateData["experience"] as string, 10) || 0;
     }
-    if (typeof updateData.consultationFee === 'string') {
-      updateData.consultationFee = parseInt(updateData.consultationFee, 10) || 0;
+    if (typeof updateData["consultationFee"] === 'string') {
+      updateData["consultationFee"] = parseInt(updateData["consultationFee"] as string, 10) || 0;
     }
 
     // Ensure a doctor doc exists; if not, create one with required fields
@@ -57,13 +57,13 @@ export async function PUT(request: Request) {
         firstName,
         lastName,
         email: safeEmail,
-        specialization: updateData.specialization || 'General Practice',
-        experience: updateData.experience ?? 0,
-        qualification: updateData.qualification || 'To be updated',
-        contactNumber: updateData.contactNumber || 'Not provided',
-        consultationFee: updateData.consultationFee ?? 0,
-        availableSlots: updateData.availableSlots || [],
-        biography: updateData.biography || '',
+        specialization: (updateData["specialization"] as string) || 'General Practice',
+        experience: (updateData["experience"] as number) ?? 0,
+        qualification: (updateData["qualification"] as string) || 'To be updated',
+        contactNumber: (updateData["contactNumber"] as string) || 'Not provided',
+        consultationFee: (updateData["consultationFee"] as number) ?? 0,
+        availableSlots: (updateData["availableSlots"] as unknown[]) || [],
+        biography: (updateData["biography"] as string) || '',
         profileCompleted: true,
         isActive: true,
       });

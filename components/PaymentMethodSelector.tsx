@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CreditCard, Globe, Shield, CheckCircle } from 'lucide-react';
+import { CreditCard, Shield, CheckCircle } from 'lucide-react';
 // import PaymentForm from './PaymentForm';
 import RazorpayPaymentForm from './RazorpayPaymentForm';
 

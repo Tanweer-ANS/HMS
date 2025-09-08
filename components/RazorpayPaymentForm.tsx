@@ -1,15 +1,15 @@
 'use client';
 
 // Import necessary React hooks and components
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, CheckCircle, AlertCircle, CreditCard } from 'lucide-react';
+import { Loader2, AlertCircle, CreditCard } from 'lucide-react';
 
 // Extend the global Window interface to include Razorpay, as it's loaded dynamically
 declare global {
   interface Window {
-    Razorpay: any;
+    Razorpay: new (options: unknown) => { open: () => void };
   }
 }
 
@@ -38,33 +38,17 @@ export default function RazorpayPaymentForm({
 }: RazorpayPaymentFormProps) {
   // State to manage component loading status, order data, and errors
   const [loading, setLoading] = useState(false);
-  const [orderData, setOrderData] = useState<any>(null); // Stores the Razorpay order details from the backend
+  interface CreatedOrderData {
+    keyId: string;
+    amount: number;
+    currency: string;
+    orderId: string;
+  }
+  const [orderData, setOrderData] = useState<CreatedOrderData | null>(null); // Stores the Razorpay order details from the backend
   const [error, setError] = useState<string | null>(null);
 
-  // useEffect hook to handle side effects like script loading and order creation
-  useEffect(() => {
-    // Dynamically create and append the Razorpay checkout script to the document body
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    script.onload = () => {
-      // Once the script is loaded, create the payment order
-      createOrder();
-    };
-    script.onerror = () => {
-      // If script loading fails, set an error message
-      setError('Failed to load Razorpay');
-    };
-    document.body.appendChild(script);
-
-    // Cleanup function to remove the script when the component unmounts
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []); // The empty dependency array ensures this runs only once
-
   // Asynchronous function to create a Razorpay order via the API
-  const createOrder = async () => {
+  const createOrder = useCallback(async (): Promise<void> => {
     try {
       setLoading(true); // Start loading state
       setError(null); // Clear any previous errors
@@ -91,17 +75,41 @@ export default function RazorpayPaymentForm({
 
       // Parse the JSON response and store the order data
       const data = await response.json();
-      setOrderData(data);
+      setOrderData(data as CreatedOrderData);
     } catch (err) {
       // Catch and set any errors that occur during the fetch operation
       setError(err instanceof Error ? err.message : 'Failed to create order');
     } finally {
       setLoading(false); // End loading state
     }
-  };
+  }, [doctorId, appointmentDate, appointmentTime, reason, amount]);
+
+  // useEffect hook to handle side effects like script loading and order creation
+  useEffect(() => {
+    // Dynamically create and append the Razorpay checkout script to the document body
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    script.onload = () => {
+      // Once the script is loaded, create the payment order
+      void createOrder();
+    };
+    script.onerror = () => {
+      // If script loading fails, set an error message
+      setError('Failed to load Razorpay');
+    };
+    document.body.appendChild(script);
+
+    // Cleanup function to remove the script when the component unmounts
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, [createOrder]); // Run on mount and when inputs to order creation change
+
+  
 
   // Function to handle the payment process by opening the Razorpay payment modal
-  const handlePayment = () => {
+  const handlePayment = (): void => {
     // Check if order data and Razorpay script are available
     if (!orderData || !window.Razorpay) {
       setError('Payment system not ready');
@@ -116,9 +124,8 @@ export default function RazorpayPaymentForm({
       name: 'HMS Healthcare',
       description: `Appointment with Dr. ${doctorName}`,
       order_id: orderData.orderId, // The order ID received from the backend
-      handler: function (response: any) {
+      handler: function () {
         // This function is called when the payment is successful
-        console.log('Payment successful:', response);
         onSuccess(); // Call the parent component's onSuccess function
       },
       // Optional pre-filled information for the payment form
@@ -145,7 +152,7 @@ export default function RazorpayPaymentForm({
       // Create a new Razorpay instance and open the checkout modal
       const razorpay = new window.Razorpay(options);
       razorpay.open();
-    } catch (err) {
+    } catch {
       // Catch and display any errors that occur when trying to open the modal
       setError('Failed to open payment form');
     }
@@ -197,7 +204,7 @@ export default function RazorpayPaymentForm({
         <div className="bg-blue-50 p-4 rounded-lg">
           <h4 className="font-medium text-blue-900 mb-2">Payment Details</h4>
           <p className="text-sm text-blue-700">
-            You will be redirected to Razorpay's secure payment gateway to complete your payment.
+            You will be redirected to Razorpay&#39;s secure payment gateway to complete your payment.
           </p>
         </div>
 

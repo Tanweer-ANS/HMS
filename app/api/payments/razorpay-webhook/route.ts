@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
-import { razorpay } from '@/lib/razorpay';
 import connectDB from '@/lib/mongodb';
 import Appointment from '@/models/Appointment';
 import crypto from 'crypto';
 
 export async function POST(request: Request) {
   const body = await request.text();
-  const signature = headers().get('x-razorpay-signature');
+  const headerList = await headers();
+  const signature = headerList.get('x-razorpay-signature');
 
   if (!signature) {
     return NextResponse.json({ error: 'No signature' }, { status: 400 });
