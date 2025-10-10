@@ -13,13 +13,13 @@ if (!MONGODB_URI) {
  */
 declare global {
   // We must use `var` here, not `let` or `const`
-  // eslint-disable-next-line no-var
   var mongooseCache: {
     conn: Mongoose | null;
     promise: Promise<Mongoose> | null;
   };
 }
 
+// Use existing cache or create a new one
 let cached = global.mongooseCache;
 
 if (!cached) {
@@ -46,7 +46,6 @@ export default async function connectDB() {
   try {
     cached.conn = await cached.promise;
   } catch (e) {
-    // If the connection fails, reset the promise so a new attempt can be made
     cached.promise = null;
     console.error("❌ MongoDB connection error:", e);
     throw e;

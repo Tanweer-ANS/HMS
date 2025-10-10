@@ -23,8 +23,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Appointment not found' }, { status: 404 });
     }
 
-    // In a real gateway integration, verify amount, process charge, etc.
-    // Here, just mark as Paid.
+
     appointment.paymentStatus = 'Paid';
     await appointment.save();
 
