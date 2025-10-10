@@ -96,15 +96,6 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Error creating user role:', error);
     
-    // Handle specific MongoDB errors
-    // if (error.code === 11000) {
-    //   const duplicateField = Object.keys(error.keyValue || {})[0];
-    //   return NextResponse.json(
-    //     { error: `Duplicate ${duplicateField}. This ${role} already exists.` },
-    //     { status: 409 }
-    //   );
-    // }
-
     return NextResponse.json(
       { error: 'Failed to create user role' }, 
       { status: 500 }

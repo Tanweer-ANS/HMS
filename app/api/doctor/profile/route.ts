@@ -33,7 +33,7 @@ export async function PUT(request: Request) {
 
     await connectDB();
     const data = await request.json();
-    const updateData = { ...data } as any;
+    const updateData = { ...data } ;
 
     // Parse numeric fields defensively
     if (typeof updateData.experience === 'string') {
