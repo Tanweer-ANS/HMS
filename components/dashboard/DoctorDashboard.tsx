@@ -4,7 +4,7 @@
 // Uses Clerk for authentication and fetches doctor/appointment data from backend APIs.
 
 import { useState, useEffect } from 'react';
-import { useUser} from '@clerk/nextjs';
+import { useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -19,7 +19,6 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-import DoctorOnboarding from "@/app/doctor/onboarding/page";
 import DoctorProfile from './DoctorProfile';
 import AnalyticsPage from "@/app/analytics/page"
 
@@ -138,8 +137,8 @@ export default function DoctorDashboard() {
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`px-3 py-2 rounded-md text-sm font-medium capitalize transition-colors ${activeTab === tab
-                      ? 'bg-green-100 text-green-700'
-                      : 'text-gray-500 hover:text-gray-700'
+                    ? 'bg-green-100 text-green-700'
+                    : 'text-gray-500 hover:text-gray-700'
                     }`}
                 >
                   {tab}

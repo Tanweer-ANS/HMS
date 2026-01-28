@@ -2,14 +2,14 @@
 
 // Import React hooks and components from various libraries
 import { useState, useEffect } from 'react';
-import { useUser } from '@clerk/nextjs';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { User, Edit, Save, X, Stethoscope, Clock, CheckCircle, AlertCircle} from 'lucide-react';
+import { User, Edit, Save, X, Stethoscope, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 // Define the shape of the Doctor data object using a TypeScript interface
@@ -41,7 +41,7 @@ interface Doctor {
 // Main DoctorProfile component
 export default function DoctorProfile() {
   // Get the current user from Clerk
-  const { user } = useUser();
+
 
   // State variables to manage component behavior and data
   const [doctor, setDoctor] = useState<Doctor | null>(null); // Stores the doctor's profile data
@@ -237,11 +237,10 @@ export default function DoctorProfile() {
 
       {/* Message display for success or error feedback */}
       {message && (
-        <div className={`p-4 rounded-lg flex items-center space-x-2 ${
-          message.type === 'success' 
-            ? 'bg-green-100 text-green-800 border border-green-200' 
-            : 'bg-red-100 text-red-800 border border-red-200'
-        }`}>
+        <div className={`p-4 rounded-lg flex items-center space-x-2 ${message.type === 'success'
+          ? 'bg-green-100 text-green-800 border border-green-200'
+          : 'bg-red-100 text-red-800 border border-red-200'
+          }`}>
           {message.type === 'success' ? (
             <CheckCircle className="h-4 w-4" />
           ) : (

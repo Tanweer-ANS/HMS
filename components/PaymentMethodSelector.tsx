@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CreditCard, Globe, Shield, CheckCircle } from 'lucide-react';
+import { CreditCard, Shield, CheckCircle } from 'lucide-react';
 // import PaymentForm from './PaymentForm';
 import RazorpayPaymentForm from './RazorpayPaymentForm';
 
@@ -32,7 +32,7 @@ export default function PaymentMethodSelector({
   onCancel,
 }: PaymentMethodSelectorProps) {
   // State to track which payment method is currently selected
-  const [selectedMethod, setSelectedMethod] = useState< 'razorpay' | null>(null);
+  const [selectedMethod, setSelectedMethod] = useState<'razorpay' | null>(null);
 
   // Array of payment method objects with their details
   const paymentMethods = [
@@ -92,9 +92,8 @@ export default function PaymentMethodSelector({
           {paymentMethods.map((method) => (
             <Card
               key={method.id}
-              className={`cursor-pointer transition-all hover:shadow-md border-2 ${
-                selectedMethod === method.id ? method.borderColor : 'border-gray-200'
-              }`}
+              className={`cursor-pointer transition-all hover:shadow-md border-2 ${selectedMethod === method.id ? method.borderColor : 'border-gray-200'
+                }`}
               onClick={() => setSelectedMethod(method.id as 'razorpay')}
             >
               <CardContent className="p-4">
@@ -106,7 +105,7 @@ export default function PaymentMethodSelector({
                     <p className="text-sm text-gray-600">{method.description}</p>
                   </div>
                 </div>
-                
+
                 {/* List of features for the payment method */}
                 <ul className="space-y-1 mb-4">
                   {method.features.map((feature, index) => (

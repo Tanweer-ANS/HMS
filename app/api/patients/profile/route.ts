@@ -34,7 +34,7 @@ export async function PUT(request: Request) {
 
     await connectDB();
     const data = await request.json();
-    const updateData = { ...data } as any;
+    const updateData = { ...data } as { dateOfBirth?: string | Date; age?: number; [key: string]: unknown };
 
     // Calculate age from date of birth if provided
     if (updateData.dateOfBirth) {
